@@ -38,11 +38,22 @@ struct CountieView: View {
                             Label("Save Counter", systemImage: "square.and.arrow.down")
                         }
                     }
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button(action: loadCounter) {
+                            Label("Load Counter", systemImage: "tray.and.arrow.up")
+                        }
+                        // .buttonStyle(.borderedProminent)
+                        .tint(.orange)
+                    }
                 }
         }
     }
     private func saveCounter() {
         // TODO: save this counter
+    }
+    
+    private func loadCounter() {
+        // TODO: load an existing counter
     }
 }
 
