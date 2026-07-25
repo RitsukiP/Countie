@@ -13,7 +13,7 @@ struct CountieView: View {
     var body: some View {
         NavigationStack {
             Circle()
-                .strokeBorder(Color.blue, lineWidth: 14)
+                .strokeBorder(Color.blue, lineWidth: 12)
                 .frame(width: 280, height: 280)
                 .overlay {
                     Text("\(count)")
@@ -31,7 +31,18 @@ struct CountieView: View {
                     }
                 }
                 .navigationTitle("Countie")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: saveCounter) {
+                            Label("Save Counter", systemImage: "square.and.arrow.down")
+                        }
+                    }
+                }
         }
+    }
+    private func saveCounter() {
+        // TODO: save this counter
     }
 }
 

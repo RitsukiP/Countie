@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct MultiView: View {
+    @State private var isAddingCounter = false
+
     var body: some View {
         NavigationStack {
             ContentUnavailableView(
@@ -15,7 +17,8 @@ struct MultiView: View {
                 systemImage: "number.circle",
                 description: Text("Your counters will appear here.")
             )
-            .navigationTitle("Countie")
+            .navigationTitle("Multiple Counters")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: addCounter) {
@@ -23,12 +26,14 @@ struct MultiView: View {
                     }
                 }
             }
-            
+            .sheet(isPresented: $isAddingCounter) {
+                AddCounterView()
+            }
         }
     }
-    
+
     private func addCounter() {
-        // TODO: create a new counter
+        isAddingCounter = true
     }
 }
 

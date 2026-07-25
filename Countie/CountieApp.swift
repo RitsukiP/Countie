@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct CountieApp: App {
@@ -13,5 +14,6 @@ struct CountieApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: Counter.self)
     }
 }
