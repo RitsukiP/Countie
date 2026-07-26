@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  RootView.swift
 //  Countie
 //
 //  Created by Ethan Chen on 24/7/2026.
@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct RootView: View {
     var body: some View {
         TabView {
             Tab("Home", systemImage: "number.circle.fill") {
-                CountieView()
+                HomeView()
             }
             Tab("Multiple", systemImage: "clock.badge") {
-                MultiView()
+                CounterListView()
             }
             Tab("Settings", systemImage: "gearshape.fill") {
                 SettingsView()
@@ -24,5 +24,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    RootView()
 }

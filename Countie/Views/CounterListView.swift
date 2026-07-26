@@ -1,5 +1,5 @@
 //
-//  MultiView.swift
+//  CounterListView.swift
 //  Countie
 //
 //  Created by Ethan Chen on 24/7/2026.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct MultiView: View {
+struct CounterListView: View {
     @State private var isAddingCounter = false
 
     var body: some View {
@@ -38,5 +38,5 @@ struct MultiView: View {
 }
 
 #Preview {
-    MultiView()
+    CounterListView()
 }

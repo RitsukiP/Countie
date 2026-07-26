@@ -1,5 +1,5 @@
 //
-//  CountieView.swift
+//  HomeView.swift
 //  Countie
 //
 //  Created by Ethan Chen on 24/7/2026.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CountieView: View {
+struct HomeView: View {
     @State private var count = 0
 
     var body: some View {
@@ -58,5 +58,5 @@ struct CountieView: View {
 }
 
 #Preview {
-    CountieView()
+    HomeView()
 }

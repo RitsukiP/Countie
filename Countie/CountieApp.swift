@@ -12,7 +12,7 @@ import SwiftData
 struct CountieApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
         .modelContainer(for: Counter.self)
     }
