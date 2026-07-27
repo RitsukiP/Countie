@@ -43,7 +43,7 @@ struct HomeView: View {
                             Label("Load Counter", systemImage: "tray.and.arrow.up")
                         }
                         // .buttonStyle(.borderedProminent)
-                        .tint(.orange)
+                        // .tint(.orange)
                     }
                 }
         }
