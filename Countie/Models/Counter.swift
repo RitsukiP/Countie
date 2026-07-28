@@ -17,7 +17,7 @@ final class Counter {
     var count: Int = 0
 
     /// Target the counter is working towards. `nil` means the counter has no goal.
-    var goal: Int?
+    var goal: Int?      // '?' means optional
 
     /// Identifies this counter internally. Never shown to the user.
     @Attribute(.unique) private(set) var uid: UUID = UUID()
@@ -27,7 +27,8 @@ final class Counter {
         guard let goal else { return false }
         return count >= goal
     }
-
+    
+    // default initialisation
     init(name: String, goal: Int? = nil) {
         self.name = name
         self.goal = goal

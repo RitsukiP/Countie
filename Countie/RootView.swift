@@ -13,7 +13,7 @@ struct RootView: View {
             Tab("Home", systemImage: "number.circle.fill") {
                 HomeView()
             }
-            Tab("Multiple", systemImage: "clock.badge") {
+            Tab("Multiple", systemImage: "rectangle.grid.1x3") {
                 CounterListView()
             }
             Tab("Settings", systemImage: "gearshape.fill") {

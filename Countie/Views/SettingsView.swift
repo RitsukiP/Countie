@@ -12,9 +12,15 @@ struct SettingsView: View {
         NavigationStack {
             Form {
                 Section {
-                    LabeledContent("Version", value: "1.0")
+                    LabeledContent("Version", value: "0.1.0")
+                    LabeledContent("Current iOS version", value: UIDevice.current.systemVersion)
                 } header: {
                     Text("About")
+                }
+                Section {
+                    // add section here
+                } header: {
+                    Text("Support")
                 }
             }
             .navigationTitle("Settings")
