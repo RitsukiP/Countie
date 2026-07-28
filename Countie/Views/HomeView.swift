@@ -13,7 +13,7 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             Circle()
-                .strokeBorder(Color.blue, lineWidth: 12)
+                .strokeBorder(Color("CounterRing"), lineWidth: 12)
                 .frame(width: 280, height: 280)
                 .overlay {
                     Text("\(count)")
@@ -57,6 +57,11 @@ struct HomeView: View {
     }
 }
 
-#Preview {
+#Preview("Light") {
     HomeView()
+}
+
+#Preview("Dark") {
+    HomeView()
+        .preferredColorScheme(.dark)
 }
