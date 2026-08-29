@@ -35,7 +35,7 @@ struct HomeView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(action: saveCounter) {
-                            Label("Save Counter", systemImage: "square.and.arrow.down")
+                            Label("Save Counter", systemImage: "square.and.arrow.down.on.square")
                         }
                     }
                     ToolbarItem(placement: .topBarLeading) {

@@ -6,17 +6,32 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct CounterListView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \Counter.name) private var counters: [Counter]
+
     @State private var isAddingCounter = false
 
     var body: some View {
         NavigationStack {
-            ContentUnavailableView(
-                "No Counters Yet",
-                systemImage: "number.circle",
-                description: Text("Your counters will appear here.")
-            )
+            Group {
+                if counters.isEmpty {
+                    ContentUnavailableView(
+                        "No Counters Yet",
+                        systemImage: "number.circle",
+                        description: Text("Your counters will appear here.")
+                    )
+                } else {
+                    List {
+                        ForEach(counters) { counter in
+                            CounterRowView(counter: counter)
+                        }
+                        .onDelete(perform: deleteCounters)
+                    }
+                }
+            }
             .navigationTitle("Multiple Counters")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -35,8 +50,27 @@ struct CounterListView: View {
     private func addCounter() {
         isAddingCounter = true
     }
+
+    private func deleteCounters(at offsets: IndexSet) {
+        withAnimation {
+            for index in offsets {
+                modelContext.delete(counters[index])
+            }
+        }
+    }
 }
 
-#Preview {
+#Preview("With counters") {
+    let container = try! ModelContainer(
+        for: Counter.self,
+        configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+    )
+    Counter.seedSampleDataIfEmpty(in: container.mainContext)
+    return CounterListView()
+        .modelContainer(container)
+}
+
+#Preview("Empty") {
     CounterListView()
+        .modelContainer(for: Counter.self, inMemory: true)
 }

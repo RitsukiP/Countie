@@ -27,6 +27,12 @@ final class Counter {
         guard let goal else { return false }
         return count >= goal
     }
+
+    /// Fraction of the goal reached (0...1), or `nil` when there is no usable goal.
+    var progress: Double? {
+        guard let goal, goal > 0 else { return nil }
+        return min(Double(count) / Double(goal), 1)
+    }
     
     // default initialisation
     init(name: String, goal: Int? = nil) {
