@@ -56,16 +56,21 @@ struct CounterListView: View {
             for index in offsets {
                 modelContext.delete(counters[index])
             }
+            try? modelContext.save()
         }
     }
 }
 
+// In-memory store. Tapping + here does show the new row, but only until the
+// canvas refreshes.
 #Preview("With counters") {
     let container = try! ModelContainer(
         for: Counter.self,
         configurations: ModelConfiguration(isStoredInMemoryOnly: true)
     )
-    Counter.seedSampleDataIfEmpty(in: container.mainContext)
+    for (name, goal, count) in [("No goal", nil, 7), ("In progress", 100, 37), ("Completed", 10, 10)] as [(String, Int?, Int)] {
+        container.mainContext.insert(Counter.make(name: name, goal: goal, count: count, among: []))
+    }
     return CounterListView()
         .modelContainer(container)
 }

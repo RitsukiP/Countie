@@ -63,9 +63,16 @@ extension Counter {
     }
 
     /// Creates a counter, naming it automatically when `name` is nil or blank.
-    static func make(name: String? = nil, goal: Int? = nil, among existing: [Counter]) -> Counter {
+    static func make(
+        name: String? = nil,
+        goal: Int? = nil,
+        count: Int = 0,
+        among existing: [Counter]
+    ) -> Counter {
         let trimmed = name?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         let resolvedName = trimmed.isEmpty ? defaultName(among: existing) : trimmed
-        return Counter(name: resolvedName, goal: goal)
+        let counter = Counter(name: resolvedName, goal: goal)
+        counter.count = count
+        return counter
     }
 }

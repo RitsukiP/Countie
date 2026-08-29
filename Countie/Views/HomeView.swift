@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct HomeView: View {
     @State private var count = 0
+    @State private var isSavingCounter = false
 
     var body: some View {
         NavigationStack {
@@ -32,6 +34,9 @@ struct HomeView: View {
                 }
                 .navigationTitle("Countie")
                 .navigationBarTitleDisplayMode(.inline)
+                .sheet(isPresented: $isSavingCounter) {
+                    AddCounterView(initialCount: count)
+                }
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(action: saveCounter) {
@@ -49,7 +54,7 @@ struct HomeView: View {
         }
     }
     private func saveCounter() {
-        // TODO: save this counter
+        isSavingCounter = true
     }
     
     private func loadCounter() {
@@ -57,11 +62,14 @@ struct HomeView: View {
     }
 }
 
+// In-memory store: saving from the sheet works but nothing persists in the canvas.
 #Preview("Light") {
     HomeView()
+        .modelContainer(for: Counter.self, inMemory: true)
 }
 
 #Preview("Dark") {
     HomeView()
         .preferredColorScheme(.dark)
+        .modelContainer(for: Counter.self, inMemory: true)
 }
