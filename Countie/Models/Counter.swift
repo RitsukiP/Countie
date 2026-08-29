@@ -62,6 +62,12 @@ extension Counter {
         return "\(defaultNamePrefix)\(number)"
     }
 
+    /// Trimmed `name`, or the next default "Counter N" when it is nil or blank.
+    static func resolvedName(_ name: String?, among existing: [Counter]) -> String {
+        let trimmed = name?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return trimmed.isEmpty ? defaultName(among: existing) : trimmed
+    }
+
     /// Creates a counter, naming it automatically when `name` is nil or blank.
     static func make(
         name: String? = nil,
@@ -69,9 +75,7 @@ extension Counter {
         count: Int = 0,
         among existing: [Counter]
     ) -> Counter {
-        let trimmed = name?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        let resolvedName = trimmed.isEmpty ? defaultName(among: existing) : trimmed
-        let counter = Counter(name: resolvedName, goal: goal)
+        let counter = Counter(name: resolvedName(name, among: existing), goal: goal)
         counter.count = count
         return counter
     }

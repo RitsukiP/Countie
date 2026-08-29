@@ -16,14 +16,29 @@ struct AddCounterView: View {
     /// Existing counters, used to work out the "Counter N" placeholder.
     @Query private var counters: [Counter]
 
-    @State private var name = ""
+    @State private var name: String
     @State private var countText: String
-    @State private var goalText = ""
+    @State private var goalText: String
+
+    /// The counter being edited, or `nil` when creating a new one.
+    private let editing: Counter?
 
     /// `initialCount` lets the Home tab open this sheet pre-filled with its count.
     /// Zero maps to an empty field so the "0" placeholder shows instead.
     init(initialCount: Int = 0) {
+        editing = nil
+        _name = State(initialValue: "")
         _countText = State(initialValue: initialCount == 0 ? "" : String(initialCount))
+        _goalText = State(initialValue: "")
+    }
+
+    /// Opens the sheet on an existing counter; saving updates that instance
+    /// rather than inserting a new one.
+    init(editing counter: Counter) {
+        editing = counter
+        _name = State(initialValue: counter.name)
+        _countText = State(initialValue: String(counter.count))
+        _goalText = State(initialValue: counter.goal.map(String.init) ?? "")
     }
 
     /// Placeholder shown in the name field, and the name used when it's left blank.
@@ -58,7 +73,7 @@ struct AddCounterView: View {
                     Text("Leave empty to count without a goal.")
                 }
             }
-            .navigationTitle("New Counter")
+            .navigationTitle(editing == nil ? "New Counter" : "Edit Counter")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -81,14 +96,18 @@ struct AddCounterView: View {
         // A goal of 0 is treated as "no goal": otherwise `isDone` would be true
         // for a brand-new counter while `progress` reported nil.
         let goal = Int(goalText).flatMap { $0 > 0 ? $0 : nil }
+        let count = Int(countText) ?? 0
 
-        let counter = Counter.make(
-            name: name,
-            goal: goal,
-            count: Int(countText) ?? 0,
-            among: counters
-        )
-        modelContext.insert(counter)
+        if let editing {
+            // Exclude self so a blank name doesn't collide with this counter's own.
+            editing.name = Counter.resolvedName(name, among: counters.filter { $0.uid != editing.uid })
+            editing.goal = goal
+            editing.count = count
+        } else {
+            modelContext.insert(
+                Counter.make(name: name, goal: goal, count: count, among: counters)
+            )
+        }
         // Flush immediately: autosave alone can lose the counter if the app is
         // force-quit or crashes before SwiftData gets round to writing.
         do {
