@@ -23,10 +23,15 @@ struct AddCounterView: View {
     /// The counter being edited, or `nil` when creating a new one.
     private let editing: Counter?
 
+    /// Called with the newly created counter. `nil` when the presenter does not care —
+    /// creating from the Multiple tab must not change Home's loaded counter.
+    private let onCreate: ((Counter) -> Void)?
+
     /// `initialCount` lets the Home tab open this sheet pre-filled with its count.
     /// Zero maps to an empty field so the "0" placeholder shows instead.
-    init(initialCount: Int = 0) {
+    init(initialCount: Int = 0, onCreate: ((Counter) -> Void)? = nil) {
         editing = nil
+        self.onCreate = onCreate
         _name = State(initialValue: "")
         _countText = State(initialValue: initialCount == 0 ? "" : String(initialCount))
         _goalText = State(initialValue: "")
@@ -36,6 +41,7 @@ struct AddCounterView: View {
     /// rather than inserting a new one.
     init(editing counter: Counter) {
         editing = counter
+        onCreate = nil                  // editing never creates anything
         _name = State(initialValue: counter.name)
         _countText = State(initialValue: String(counter.count))
         _goalText = State(initialValue: counter.goal.map(String.init) ?? "")
@@ -98,15 +104,16 @@ struct AddCounterView: View {
         let goal = Int(goalText).flatMap { $0 > 0 ? $0 : nil }
         let count = Int(countText) ?? 0
 
+        var created: Counter?
         if let editing {
             // Exclude self so a blank name doesn't collide with this counter's own.
             editing.name = Counter.resolvedName(name, among: counters.filter { $0.uid != editing.uid })
             editing.goal = goal
             editing.count = count
         } else {
-            modelContext.insert(
-                Counter.make(name: name, goal: goal, count: count, among: counters)
-            )
+            let counter = Counter.make(name: name, goal: goal, count: count, among: counters)
+            modelContext.insert(counter)
+            created = counter
         }
         // Flush immediately: autosave alone can lose the counter if the app is
         // force-quit or crashes before SwiftData gets round to writing.
@@ -117,6 +124,10 @@ struct AddCounterView: View {
             // identical to "the save button does nothing".
             print("⚠️ Countie: failed to save counter — \(error)")
         }
+
+        // After the save, so the counter is durable and already visible to @Query
+        // by the time the presenter reacts to it.
+        if let created { onCreate?(created) }
         dismiss()
     }
 }

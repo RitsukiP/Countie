@@ -59,7 +59,13 @@ struct HomeView: View {
                 if let loadedCounter {
                     AddCounterView(editing: loadedCounter)
                 } else {
-                    AddCounterView(initialCount: scratchCount)
+                    AddCounterView(initialCount: scratchCount) { created in
+                        // Creating from Home adopts the new counter straight away.
+                        loadedCounterUID = created.uid.uuidString
+                        // The scratch number now lives in the saved counter; leaving it
+                        // would resurrect it if that counter is later deleted.
+                        scratchCount = 0
+                    }
                 }
             }
             .sheet(isPresented: $isLoadingCounter) {
