@@ -19,7 +19,7 @@ struct HomeView: View {
     /// Used only when no counter is loaded, so Home still works as a scratch pad.
     @State private var scratchCount = 0
 
-    @State private var isSavingCounter = false
+    @State private var isEditingCounter = false
     @State private var isLoadingCounter = false
 
     /// Derived from `@Query` rather than held in `@State`: if the loaded counter is
@@ -55,7 +55,7 @@ struct HomeView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .toolbar(.hidden, for: .navigationBar)
-            .sheet(isPresented: $isSavingCounter) {
+            .sheet(isPresented: $isEditingCounter) {
                 if let loadedCounter {
                     AddCounterView(editing: loadedCounter)
                 } else {
@@ -85,6 +85,17 @@ struct HomeView: View {
     /// much larger glyph than `plus` — without a shared box the two capsules differ.
     private let headerIconSize: CGFloat = 24
 
+    /// The trailing header button both creates and edits, so its glyph and its
+    /// VoiceOver name say which. Wording matches `AddCounterView`'s own title, so the
+    /// button and the sheet it opens agree.
+    private var editorIcon: String {
+        loadedCounter == nil ? "plus" : "square.and.pencil"
+    }
+
+    private var editorTitle: String {
+        loadedCounter == nil ? "New Counter" : "Edit Counter"
+    }
+
     /// Title and buttons on one row. Built as content rather than as toolbar items:
     /// the navigation bar sizes items to its own ~44pt height, and at 40pt iOS pushes
     /// an oversized item into a "..." overflow menu instead of showing it.
@@ -101,9 +112,13 @@ struct HomeView: View {
                         .frame(width: headerIconSize, height: headerIconSize)
                 }
                 .buttonStyle(.glass)
-                Button(action: saveCounter) {
-                    Label("Save Counter", systemImage: "plus")
+                Button(action: presentCounterEditor) {
+                    Label(editorTitle, systemImage: editorIcon)
                         .frame(width: headerIconSize, height: headerIconSize)
+                        .contentTransition(.symbolEffect(.replace))
+                        // The writes that flip this button are bare assignments,
+                        // so without this the symbol swaps without transitioning.
+                        .animation(.default, value: editorIcon)
                 }
                 .buttonStyle(.glassProminent)
             }
@@ -180,8 +195,8 @@ struct HomeView: View {
         }
     }
 
-    private func saveCounter() {
-        isSavingCounter = true
+    private func presentCounterEditor() {
+        isEditingCounter = true
     }
 
     private func loadCounter() {
