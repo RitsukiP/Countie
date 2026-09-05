@@ -26,7 +26,7 @@ struct CounterListView: View {
                 } else {
                     List {
                         ForEach(counters) { counter in
-                            CounterRowView(counter: counter)
+                            CounterRowView(counter: counter) { increment(counter) }
                         }
                         .onDelete(perform: deleteCounters)
                     }
@@ -49,6 +49,19 @@ struct CounterListView: View {
 
     private func addCounter() {
         isAddingCounter = true
+    }
+
+    /// Writes straight through to the store, so Home and the database stay in
+    /// step with every tap.
+    private func increment(_ counter: Counter) {
+        withAnimation {
+            counter.increment()
+            do {
+                try modelContext.save()
+            } catch {
+                print("⚠️ Countie: failed to save count — \(error)")
+            }
+        }
     }
 
     private func deleteCounters(at offsets: IndexSet) {

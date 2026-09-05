@@ -168,7 +168,7 @@ struct HomeView: View {
     private func increment() {
         withAnimation {
             if let loadedCounter {
-                loadedCounter.count += 1
+                loadedCounter.increment()
                 do {
                     try modelContext.save()
                 } catch {
