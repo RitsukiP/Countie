@@ -33,7 +33,13 @@ final class Counter {
         guard let goal, goal > 0 else { return nil }
         return min(Double(count) / Double(goal), 1)
     }
-    
+
+    /// Counts up by one. Callers are responsible for saving — a model has no
+    /// `ModelContext` of its own.
+    func increment() {
+        count += 1
+    }
+
     // default initialisation
     init(name: String, goal: Int? = nil) {
         self.name = name

@@ -13,6 +13,11 @@ import SwiftData
 struct CounterRowView: View {
     let counter: Counter
 
+    /// When non-nil the row shows a "+" that calls this. `nil` — the default —
+    /// keeps the row a pure display view, which is what `LoadCounterView` needs:
+    /// there the whole row is already a selection button.
+    var onIncrement: (() -> Void)? = nil
+
     private let ringSize: CGFloat = 44
     private let ringWidth: CGFloat = 4
 
@@ -30,9 +35,28 @@ struct CounterRowView: View {
 
             Spacer()
 
-            if counter.isDone {
+            HStack(spacing: 8) {
+                if let onIncrement {
+                    Button(action: onIncrement) {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title2)
+                            // Without a frame the tap target is just the glyph,
+                            // far under the 44pt minimum.
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    // In a List row the default style fires the button from a tap
+                    // anywhere in the row; .borderless confines it to the frame above.
+                    .buttonStyle(.borderless)
+                    .accessibilityLabel("Add one to \(counter.name)")
+                }
+
+                // Always rendered so the "+" keeps a fixed position instead of
+                // sliding left the moment the counter completes.
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(.green)
+                    .opacity(counter.isDone ? 1 : 0)
+                    .accessibilityHidden(!counter.isDone)
             }
         }
         .padding(.vertical, 4)
@@ -58,6 +82,7 @@ struct CounterRowView: View {
             Text("\(counter.count)")
                 .font(.system(size: 15, weight: .semibold, design: .rounded))
                 .monospacedDigit()
+                .contentTransition(.numericText())
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
                 .padding(ringWidth + 2)
@@ -74,6 +99,11 @@ struct CounterRowView: View {
 #Preview {
     List {
         CounterRowView(counter: Counter(name: "No goal"))
+        CounterRowView(counter: {
+            let c = Counter(name: "With + button", goal: 20)
+            c.count = 8
+            return c
+        }()) { }
         CounterRowView(counter: {
             let c = Counter(name: "In progress", goal: 100)
             c.count = 37
